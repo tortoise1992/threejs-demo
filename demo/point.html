@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            margin: 0;
+            padding:0;
+        }
+        body{
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+<script src="../lib/three.js"></script>
+<script>
+    var w=window.innerWidth,
+        h=window.innerHeight;
+    var scene=new THREE.Scene();
+    var camera=new THREE.PerspectiveCamera(45,w/h,0.1,1000);
+    camera.position.set(0,100,100);
+    camera.lookAt(scene.position);
+
+    var  renderder=new THREE.WebGLRenderer();
+    renderder.setSize(w,h);
+
+    document.body.appendChild(renderder.domElement);
+    var texture=THREE.ImageUtils.loadTexture('../img/raindrop-1.png');
+
+
+    var geom=new THREE.Geometry();
+    var mat=new THREE.ParticleBasicMaterial({
+        size:3,
+        transparent:true,
+        opacity:true,
+        map:texture,
+        blending:THREE.AdditiveBlending,
+        color:0xffffff,
+        sizeAttenuation:true
+    });
+    var range=40;
+    for(var x=-5;x<5;x++){
+        for(var y=-5;y<5;y++){
+            var part=new THREE.Vector3(
+                Math.random()*range-range/2,
+                Math.random()*range*1.5,
+                Math.random()*range-range/2
+            );
+            part.velocityY=0.1*Math.random()/5;
+            part.velocityx=(Math.random()-0.5)/3;
+            geom.vertices.push(part);
+            geom.colors.push(new THREE.Color(Math.random()*0x00ffff));
+
+        }
+    }
+    var sys=new THREE.ParticleSystem(geom,mat);
+    scene.add(sys)
+
+    function render() {
+//        camera.position.y +=0.1;
+        requestAnimationFrame(render);
+        renderder.render(scene,camera);
+    }
+    render();
+</script>
+</body>
+</html>
